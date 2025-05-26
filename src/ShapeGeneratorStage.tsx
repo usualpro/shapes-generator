@@ -1,24 +1,22 @@
-import { useEffect, useRef, useState } from "react";
-import { Stage, Layer, Rect, Circle, Text } from "react-konva";
+import { useEffect, useRef } from "react";
+import { Stage, Layer } from "react-konva";
 import { useShapeGeneratorStore } from "./ShapeGeneratorStore";
+import { ShapeItem } from "./ShapeItem";
 
 export const ShapeGeneratorStage = () => {
   const stageContainerRef = useRef<HTMLDivElement>(null);
-  const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
 
-  const { shapes } = useShapeGeneratorStore((state) => state);
+  const { shapes, updateStageSize, stageSize } = useShapeGeneratorStore(
+    (state) => state
+  );
 
   useEffect(() => {
-    const updateSize = () => {
-      if (stageContainerRef.current) {
-        const width = stageContainerRef.current.clientWidth;
-        const height = stageContainerRef.current.clientHeight;
-        setStageSize({ width, height });
-      }
-    };
-    updateSize();
-    window.addEventListener("resize", updateSize);
-    return () => window.removeEventListener("resize", updateSize);
+    if (stageContainerRef?.current) {
+      updateStageSize(stageContainerRef.current);
+      window.addEventListener("resize", () =>
+        updateStageSize(stageContainerRef.current as HTMLDivElement)
+      );
+    }
   }, []);
 
   return (
@@ -29,19 +27,20 @@ export const ShapeGeneratorStage = () => {
         className="h-full"
       >
         <Layer>
-          {/*<Text text="Try to drag shapes" fontSize={15} x={100} y={100} />*/}
-          {shapes.map((_shape, index) => (
-            <Rect
-              key={`ShapeGeneratorRect-${index}`}
-              x={20}
-              y={50}
-              width={100}
-              height={100}
-              fill="red"
-              shadowBlur={10}
-              draggable
-            />
-          ))}
+          {shapes.map((shape, index) => {
+            const { x, y, width, height, fill, rotation } = shape;
+            return (
+              <ShapeItem
+                key={`ShapeGeneratorRect-${index}`}
+                {...{ x }}
+                {...{ y }}
+                {...{ width }}
+                {...{ height }}
+                {...{ fill }}
+                {...{ rotation }}
+              />
+            );
+          })}
         </Layer>
       </Stage>
     </div>
