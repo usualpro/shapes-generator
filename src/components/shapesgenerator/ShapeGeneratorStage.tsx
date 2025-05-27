@@ -1,21 +1,28 @@
 import { useEffect, useRef } from "react";
 import { Stage, Layer } from "react-konva";
-import { useShapeGeneratorStore } from "./ShapeGeneratorStore";
+import { useShapeGeneratorStore } from "../../stores/ShapeGeneratorStore";
 import { ShapeItem } from "./ShapeItem";
 
 export const ShapeGeneratorStage = () => {
   const stageContainerRef = useRef<HTMLDivElement>(null);
 
-  const { shapes, updateStageSize, stageSize } = useShapeGeneratorStore(
-    (state) => state
-  );
+  const { shapes, updateStageSize, stageSize, setStageContainer } =
+    useShapeGeneratorStore((state) => state);
 
   useEffect(() => {
     if (stageContainerRef?.current) {
-      updateStageSize(stageContainerRef.current);
-      window.addEventListener("resize", () =>
-        updateStageSize(stageContainerRef.current as HTMLDivElement)
-      );
+      setStageContainer(stageContainerRef?.current);
+      updateStageSize();
+      window.addEventListener("resize", () => updateStageSize());
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") {
+          updateStageSize();
+        }
+      });
+      return () => {
+        window.removeEventListener("resize", updateStageSize);
+        document.removeEventListener("visibilitychange", updateStageSize);
+      };
     }
   }, []);
 
@@ -25,13 +32,15 @@ export const ShapeGeneratorStage = () => {
         width={stageSize.width}
         height={stageSize.height}
         className="h-full"
+        draggable
       >
         <Layer>
           {shapes.map((shape, index) => {
-            const { x, y, width, height, fill, rotation } = shape;
+            const { id, x, y, width, height, fill, rotation } = shape;
             return (
               <ShapeItem
                 key={`ShapeGeneratorRect-${index}`}
+                {...{ id }}
                 {...{ x }}
                 {...{ y }}
                 {...{ width }}

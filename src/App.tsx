@@ -1,33 +1,13 @@
-//import { z } from "zod/v4-mini";
-import { ShapeGeneratorPanel } from "./ShapeGeneratorPanel";
-import { ShapeGeneratorStage } from "./ShapeGeneratorStage";
+import { ShapeGeneratorPanel } from "./components/shapesgenerator/ShapeGeneratorPanel";
+import { ShapeGeneratorStage } from "./components/shapesgenerator/ShapeGeneratorStage";
 
-export const App = () => {
-  return (
-    <div className="grid grid-cols-12 h-screen ">
-      <div className="col-span-12 md:col-span-9 h-[50vh] md:h-full">
-        <ShapeGeneratorStage />
-      </div>
-      <div className="col-span-12 md:col-span-3 h-[50vh] md:h-full">
-        <ShapeGeneratorPanel />
-      </div>
+export const App = () => (
+  <div className="grid grid-cols-12 h-screen ">
+    <div className="col-span-12 md:col-span-9 h-[50vh] md:h-full">
+      <ShapeGeneratorStage />
     </div>
-  );
-};
-
-/*
-const Player = z.object({
-  username: z.string(),
-  xp: z.number(),
-});
-const vp = {
-  username: " z.string()",
-  xp: 2,
-};
-const results = Player.safeParse(vp);
-if (!results.success) {
-  console.log(results.error);
-} else {
-  console.log(results.data);
-}
-*/
+    <div className="col-span-12 md:col-span-3 h-[50vh] md:h-full">
+      <ShapeGeneratorPanel />
+    </div>
+  </div>
+);
