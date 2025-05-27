@@ -10,5 +10,9 @@ const RandomShapeSchema = z.object({
   rotation: z.number(),
 });
 
-// Define the array schema for validation
-export const ShapesArraySchema = z.array(RandomShapeSchema);
+const ShapesArraySchema = z.array(RandomShapeSchema);
+
+export const ExportedRandomShapesSchema = z.object({
+  animationsDuration: z.number(),
+  shapes: ShapesArraySchema,
+});

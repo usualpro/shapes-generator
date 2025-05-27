@@ -31,6 +31,10 @@ export const ShapeItem = ({
       {...{ height }}
       {...{ fill }}
       {...{ rotation }}
+      offset={{
+        x: width / 2,
+        y: height / 2,
+      }}
       shadowBlur={10}
     />
   );

@@ -1,21 +1,39 @@
 import { create } from "zustand";
-import {
-  type ShapeGeneratorState,
-  type RandomShapeType,
-  type Color,
+import { gsap } from "gsap";
+import type {
+  ShapeGeneratorState,
+  RandomShapeType,
+  Color,
 } from "../types/shapesgenerator";
 import { canvasSizeRelativeToParent, shuffleArray, randomize } from "../utils";
-import { ShapesArraySchema } from "../schemas/shapesgenerator";
+import { ExportedRandomShapesSchema } from "../schemas/shapesgenerator";
 import { colors } from "../consts/shapesgenerator";
+import type Konva from "konva";
 
 export const useShapeGeneratorStore = create<ShapeGeneratorState>()(
   (set, get) => ({
+    animationsDuration: 1,
     stageSize: {
       width: 0,
       height: 0,
     },
     shapes: [],
+    stage: undefined,
     stageContainer: undefined,
+    playAnimations: () => {
+      const { stage, animationsDuration } = get();
+      const shapes = stage?.getChildren();
+      if (shapes) {
+        for (let n = 0; n < shapes[0].children.length; n++) {
+          const shape = shapes[0].children[n] as Konva.Rect;
+          gsap.to(shape, {
+            rotation: "+=360",
+            duration: animationsDuration,
+            ease: "linear",
+          });
+        }
+      }
+    },
     addShape: () =>
       set((state) => {
         const {
@@ -54,9 +72,13 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>()(
         return { shapes: [...updatedShapes] };
       }),
     exportShapes: () => {
-      const { shapes } = get();
+      const { shapes, animationsDuration } = get();
       if (shapes.length > 0) {
-        const jsonString = JSON.stringify(shapes, null, 2);
+        const exportContent = {
+          animationsDuration,
+          shapes,
+        };
+        const jsonString = JSON.stringify(exportContent, null, 2);
         const blob = new Blob([jsonString], { type: "application/json" });
         const timestamp = new Date()
           .toISOString()
@@ -85,13 +107,15 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>()(
         try {
           const text = await file.text();
           const jsonData = JSON.parse(text);
-          const validationResult = ShapesArraySchema.safeParse(jsonData);
+          const validationResult =
+            ExportedRandomShapesSchema.safeParse(jsonData);
           if (!validationResult.success) {
             console.error("Validation failed:", validationResult.error);
             return;
           }
           set({
-            shapes: [...jsonData],
+            animationsDuration: jsonData.animationsDuration,
+            shapes: [...jsonData.shapes],
           });
           updateStageSize();
         } catch (error) {
@@ -104,6 +128,11 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>()(
       set(() => ({
         stageContainer,
       })),
+    setAnimationsDuration: (animationsDuration) =>
+      set(() => ({
+        animationsDuration,
+      })),
+    setStage: (stage) => set(() => ({ stage })),
     updateStageSize: () => {
       const { stageContainer } = get();
       if (stageContainer) {
