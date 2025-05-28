@@ -6,8 +6,11 @@ import type {
   Color,
 } from "../types/shapesgenerator";
 import { canvasSizeRelativeToParent, shuffleArray, randomize } from "../utils";
-import { ExportedRandomShapesSchema } from "../schemas/shapesgenerator";
-import { colors } from "../consts/shapesgenerator";
+import {
+  ExportedRandomShapesSchema,
+  AnimationDurationSchema,
+} from "../schemas/shapesgenerator";
+import { colors, easings } from "../consts/shapesgenerator";
 import type Konva from "konva";
 
 export const useShapeGeneratorStore = create<ShapeGeneratorState>()(
@@ -23,13 +26,14 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>()(
     playAnimations: () => {
       const { stage, animationsDuration } = get();
       const shapes = stage?.getChildren();
+      const randomEase = easings[Math.floor(Math.random() * easings.length)];
       if (shapes) {
         for (let n = 0; n < shapes[0].children.length; n++) {
           const shape = shapes[0].children[n] as Konva.Rect;
           gsap.to(shape, {
             rotation: "+=360",
             duration: animationsDuration,
-            ease: "linear",
+            ease: randomEase,
           });
         }
       }
@@ -42,10 +46,15 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>()(
         } = state;
         const padding = 20;
         const id = shapes.length;
-        const x = randomize() * stageWidth - padding;
-        const y = randomize() * stageHeight - padding;
-        const width = randomize() * 100 + padding;
-        const height = randomize() * 100 + padding;
+        const width = randomize() * 200 + padding;
+        const height = randomize() * 200 + padding;
+        const boundSize = Math.sqrt(width * width + height * height);
+        const maxX = stageWidth - boundSize / 2;
+        const minX = boundSize / 2;
+        const maxY = stageHeight - boundSize / 2;
+        const minY = boundSize / 2;
+        const x = minX + Math.random() * (maxX - minX);
+        const y = minY + Math.random() * (maxY - minY);
         const shuffledColors = shuffleArray(colors);
         const fill: Color =
           shuffledColors[Math.floor(randomize() * colors.length)];
@@ -71,6 +80,19 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>()(
         updatedShapes[shapeId].fill = fill;
         return { shapes: [...updatedShapes] };
       }),
+    updateStageSize: () => {
+      const { stageContainer } = get();
+      if (stageContainer) {
+        const { width, height } = canvasSizeRelativeToParent(stageContainer);
+        const stageSize = {
+          width,
+          height,
+        };
+        set(() => ({
+          stageSize,
+        }));
+      }
+    },
     exportShapes: () => {
       const { shapes, animationsDuration } = get();
       if (shapes.length > 0) {
@@ -128,23 +150,17 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>()(
       set(() => ({
         stageContainer,
       })),
-    setAnimationsDuration: (animationsDuration) =>
+    setAnimationsDuration: (animationsDuration) => {
+      const validationResult =
+        AnimationDurationSchema.safeParse(animationsDuration);
+      if (!validationResult.success) {
+        console.error("Validation failed:", validationResult.error);
+        return;
+      }
       set(() => ({
         animationsDuration,
-      })),
-    setStage: (stage) => set(() => ({ stage })),
-    updateStageSize: () => {
-      const { stageContainer } = get();
-      if (stageContainer) {
-        const { width, height } = canvasSizeRelativeToParent(stageContainer);
-        const stageSize = {
-          width,
-          height,
-        };
-        set(() => ({
-          stageSize,
-        }));
-      }
+      }));
     },
+    setStage: (stage) => set(() => ({ stage })),
   })
 );

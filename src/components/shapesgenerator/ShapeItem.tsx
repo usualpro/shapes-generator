@@ -22,6 +22,11 @@ export const ShapeItem = ({
     []
   );
 
+  const offset = {
+    x: width / 2,
+    y: height / 2,
+  };
+
   return (
     <Rect
       onClick={handleOnClick}
@@ -31,11 +36,7 @@ export const ShapeItem = ({
       {...{ height }}
       {...{ fill }}
       {...{ rotation }}
-      offset={{
-        x: width / 2,
-        y: height / 2,
-      }}
-      shadowBlur={10}
+      {...{ offset }}
     />
   );
 };

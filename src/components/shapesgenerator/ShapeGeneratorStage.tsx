@@ -24,13 +24,13 @@ export const ShapeGeneratorStage = () => {
   }, []);
 
   return (
-    <div className="w-full h-full bg-[purple]" ref={stageContainerRef}>
+    <div className="w-full h-full bg-base-300" ref={stageContainerRef}>
       <Stage
         ref={stageRef}
         width={stageSize.width}
         height={stageSize.height}
         className="h-full"
-        draggable
+        draggable={false}
       >
         <Layer>
           {shapes.map((shape, index) => {

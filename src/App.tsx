@@ -6,7 +6,7 @@ export const App = () => (
     <div className="col-span-12 md:col-span-9 h-[50vh] md:h-full">
       <ShapeGeneratorStage />
     </div>
-    <div className="col-span-12 md:col-span-3 h-auto">
+    <div className="col-span-12 md:col-span-3 h-[fit-content] min-h-[50vh] md:h-full">
       <ShapeGeneratorPanel />
     </div>
   </div>

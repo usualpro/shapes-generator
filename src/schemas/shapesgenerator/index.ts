@@ -12,7 +12,9 @@ const RandomShapeSchema = z.object({
 
 const ShapesArraySchema = z.array(RandomShapeSchema);
 
+export const AnimationDurationSchema = z.number();
+
 export const ExportedRandomShapesSchema = z.object({
-  animationsDuration: z.number(),
+  animationsDuration: AnimationDurationSchema,
   shapes: ShapesArraySchema,
 });
