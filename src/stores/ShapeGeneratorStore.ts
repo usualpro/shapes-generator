@@ -26,21 +26,17 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>()(
     playAnimations: () => {
       const { stage, animationsDuration: duration } = get();
       const shapes = stage?.getChildren();
-      const ease = easings[Math.floor(randomize() * easings.length)];
+      const ease = () => easings[Math.floor(randomize() * easings.length)];
       const numRotations = Math.floor(randomize() * easings.length) + 1;
       if (shapes) {
         const { children } = shapes[0];
-        for (let n = 0; n < children.length; n++) {
-          const shape = children[n] as Konva.Rect;
-          const rotation = "+=" + numRotations * 360;
-          /*If we only need a single revolution animation:
+        /*If we only need a single revolution animation:
           const rotation = `+=360`;*/
-          gsap.to(shape, {
-            rotation,
-            duration,
-            ease,
-          });
-        }
+        gsap.to(children, {
+          rotation: () => "+=" + numRotations * 360,
+          duration,
+          ease: ease(),
+        });
       }
     },
     addShape: () =>
