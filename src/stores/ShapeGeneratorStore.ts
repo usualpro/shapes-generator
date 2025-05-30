@@ -11,7 +11,6 @@ import {
   AnimationDurationSchema,
 } from "../schemas/shapesgenerator";
 import { colors, easings } from "../consts/shapesgenerator";
-import type Konva from "konva";
 
 export const useShapeGeneratorStore = create<ShapeGeneratorState>()(
   (set, get) => ({
