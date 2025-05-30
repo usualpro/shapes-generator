@@ -1,4 +1,4 @@
-import { z } from "zod/v4-mini";
+import { z } from "zod";
 
 const RandomShapeSchema = z.object({
   id: z.number(),
@@ -12,9 +12,9 @@ const RandomShapeSchema = z.object({
 
 const ShapesArraySchema = z.array(RandomShapeSchema);
 
-export const AnimationDurationSchema = z.number();
+export const AnimationDurationSchema = z.number().min(1);
 
-export const NumberOfRevolutionsSchema = z.number();
+export const NumberOfRevolutionsSchema = z.number().min(1);
 
 export const ExportedRandomShapesSchema = z.object({
   animationsDuration: AnimationDurationSchema,

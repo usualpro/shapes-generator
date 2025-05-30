@@ -59,9 +59,9 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>()(
         const minY = boundSize / 2;
         const x = minX + randomize() * (maxX - minX);
         const y = minY + randomize() * (maxY - minY);
-        const shuffledColors = shuffleArray(colors);
-        const fill: Color =
-          shuffledColors[Math.floor(randomize() * colors.length)];
+        //const shuffledColors = shuffleArray(colors);
+        const fill: Color = gsap.utils.random([...colors]);
+
         const rotation = randomize() * 360;
         const newShape: RandomShapeType = {
           id,
