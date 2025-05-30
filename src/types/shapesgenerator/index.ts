@@ -15,6 +15,7 @@ export type RandomShapeType = {
 
 export type ShapeGeneratorState = {
   animationsDuration: number;
+  numberOfRevolutions: number;
   stageSize: {
     width: number;
     height: number;
@@ -29,6 +30,7 @@ export type ShapeGeneratorState = {
   importShapes: () => void;
   setStageContainer: (stageContainer: HTMLDivElement) => void;
   setAnimationsDuration: (animationsDuration: number) => void;
+  setNumberOfRevolutions: (numberOfRevolutions: number) => void;
   setStage: (stage: Konva.Stage) => void;
   updateStageSize: () => void;
 };

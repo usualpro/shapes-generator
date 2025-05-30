@@ -9,12 +9,14 @@ import { canvasSizeRelativeToParent, shuffleArray, randomize } from "../utils";
 import {
   ExportedRandomShapesSchema,
   AnimationDurationSchema,
+  NumberOfRevolutionsSchema,
 } from "../schemas/shapesgenerator";
 import { colors, easings } from "../consts/shapesgenerator";
 
 export const useShapeGeneratorStore = create<ShapeGeneratorState>()(
   (set, get) => ({
     animationsDuration: 1,
+    numberOfRevolutions: 1,
     stageSize: {
       width: 0,
       height: 0,
@@ -23,15 +25,18 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>()(
     stage: undefined,
     stageContainer: undefined,
     playAnimations: () => {
-      const { stage, animationsDuration: duration } = get();
+      const {
+        stage,
+        animationsDuration: duration,
+        numberOfRevolutions,
+      } = get();
       const shapes = stage?.getChildren();
-      const numRotations = Math.floor(randomize() * easings.length) + 1;
-      if (shapes) {
-        const { children } = shapes[0];
-        /*If we only need a single revolution animation:
-          const rotation = `+=360`;*/
-        gsap.to(children, {
-          rotation: () => "+=" + numRotations * 360,
+      if (!shapes) return;
+      const { children } = shapes[0];
+      for (let index = 0; index < children.length; index++) {
+        const shape = children[index];
+        gsap.to(shape, {
+          rotation: () => "+=" + numberOfRevolutions * 360,
           duration,
           ease: `random(${easings})`,
         });
@@ -93,27 +98,27 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>()(
       }
     },
     exportShapes: () => {
-      const { shapes, animationsDuration } = get();
-      if (shapes.length > 0) {
-        const exportContent = {
-          animationsDuration,
-          shapes,
-        };
-        const jsonString = JSON.stringify(exportContent, null, 2);
-        const blob = new Blob([jsonString], { type: "application/json" });
-        const timestamp = new Date()
-          .toISOString()
-          .replace(/[-:T]/g, "")
-          .split(".")[0];
-        const defaultFileName = `shapes_${timestamp}.json`;
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = defaultFileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(link.href);
-      }
+      const { shapes, animationsDuration, numberOfRevolutions } = get();
+      if (!shapes.length) return;
+      const exportContent = {
+        animationsDuration,
+        numberOfRevolutions,
+        shapes,
+      };
+      const jsonString = JSON.stringify(exportContent, null, 2);
+      const blob = new Blob([jsonString], { type: "application/json" });
+      const timestamp = new Date()
+        .toISOString()
+        .replace(/[-:T]/g, "")
+        .split(".")[0];
+      const defaultFileName = `shapes_${timestamp}.json`;
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = defaultFileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
     },
     importShapes: () => {
       const { updateStageSize } = get();
@@ -134,8 +139,10 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>()(
             console.error("Validation failed:", validationResult.error);
             return;
           }
+          const { animationsDuration, numberOfRevolutions } = jsonData;
           set({
-            animationsDuration: jsonData.animationsDuration,
+            animationsDuration,
+            numberOfRevolutions,
             shapes: [...jsonData.shapes],
           });
           updateStageSize();
@@ -158,6 +165,17 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>()(
       }
       set(() => ({
         animationsDuration,
+      }));
+    },
+    setNumberOfRevolutions: (numberOfRevolutions) => {
+      const validationResult =
+        NumberOfRevolutionsSchema.safeParse(numberOfRevolutions);
+      if (!validationResult.success) {
+        console.error("Validation failed:", validationResult.error);
+        return;
+      }
+      set(() => ({
+        numberOfRevolutions,
       }));
     },
     setStage: (stage) => set(() => ({ stage })),

@@ -6,16 +6,24 @@ export const ShapeGeneratorPanel = () => {
   const {
     shapes,
     animationsDuration,
+    numberOfRevolutions,
     addShape,
     exportShapes,
     importShapes,
     setAnimationsDuration,
+    setNumberOfRevolutions,
     playAnimations,
   } = useShapeGeneratorStore((state) => state);
 
-  const handleOnChange = useCallback(
+  const handleOnAnimationDurationChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) =>
       setAnimationsDuration(parseFloat(event.target.value) || 1),
+    []
+  );
+
+  const handleOnRevolutionsChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) =>
+      setNumberOfRevolutions(parseFloat(event.target.value) || 1),
     []
   );
 
@@ -33,13 +41,23 @@ export const ShapeGeneratorPanel = () => {
           <input
             type="number"
             value={animationsDuration}
-            onChange={handleOnChange}
+            onChange={handleOnAnimationDurationChange}
             className="grow input-primary"
             placeholder="1"
           />
           <span className="badge badge-neutral badge-xs">
             second{animationsDuration > 1 ? "s" : ""}
           </span>
+        </label>
+        <label className="input  w-full">
+          Number of revolutions:
+          <input
+            type="number"
+            value={numberOfRevolutions}
+            onChange={handleOnRevolutionsChange}
+            className="grow input-primary"
+            placeholder="1"
+          />
         </label>
         <button
           disabled={hasShapes}
