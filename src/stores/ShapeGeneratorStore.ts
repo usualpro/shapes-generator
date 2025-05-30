@@ -24,20 +24,21 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>()(
     stage: undefined,
     stageContainer: undefined,
     playAnimations: () => {
-      const { stage, animationsDuration } = get();
+      const { stage, animationsDuration: duration } = get();
       const shapes = stage?.getChildren();
-      const randomEase = easings[Math.floor(randomize() * easings.length)];
+      const ease = easings[Math.floor(randomize() * easings.length)];
       const numRotations = Math.floor(randomize() * easings.length) + 1;
       if (shapes) {
-        for (let n = 0; n < shapes[0].children.length; n++) {
-          const shape = shapes[0].children[n] as Konva.Rect;
+        const { children } = shapes[0];
+        for (let n = 0; n < children.length; n++) {
+          const shape = children[n] as Konva.Rect;
           const rotation = "+=" + numRotations * 360;
           /*If we only need a single revolution animation:
           const rotation = `+=360`;*/
           gsap.to(shape, {
             rotation,
-            duration: animationsDuration,
-            ease: randomEase,
+            duration,
+            ease,
           });
         }
       }
@@ -57,8 +58,8 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>()(
         const minX = boundSize / 2;
         const maxY = stageHeight - boundSize / 2;
         const minY = boundSize / 2;
-        const x = minX + Math.random() * (maxX - minX);
-        const y = minY + Math.random() * (maxY - minY);
+        const x = minX + randomize() * (maxX - minX);
+        const y = minY + randomize() * (maxY - minY);
         const shuffledColors = shuffleArray(colors);
         const fill: Color =
           shuffledColors[Math.floor(randomize() * colors.length)];
