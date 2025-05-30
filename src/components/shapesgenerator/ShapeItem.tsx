@@ -40,6 +40,7 @@ export const ShapeItem = ({
   return (
     <Rect
       onClick={handleOnClick}
+      cornerRadius={10}
       {...{ x }}
       {...{ y }}
       {...{ width }}

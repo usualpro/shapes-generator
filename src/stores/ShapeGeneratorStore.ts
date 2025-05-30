@@ -5,7 +5,7 @@ import type {
   RandomShapeType,
   Color,
 } from "../types/shapesgenerator";
-import { canvasSizeRelativeToParent, shuffleArray, randomize } from "../utils";
+import { canvasSizeRelativeToParent, randomize } from "../utils";
 import {
   ExportedRandomShapesSchema,
   AnimationDurationSchema,
@@ -73,7 +73,6 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>()(
         const minY = boundSize / 2;
         const x = minX + randomize() * (maxX - minX);
         const y = minY + randomize() * (maxY - minY);
-        //const shuffledColors = shuffleArray(colors);
         const fill: Color = gsap.utils.random([...colors]);
 
         const rotation = randomize() * 360;
@@ -92,9 +91,7 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>()(
       set((state) => {
         const { shapes } = state;
         const updatedShapes = [...shapes];
-        const shuffledColors = shuffleArray(colors);
-        const fill: Color =
-          shuffledColors[Math.floor(randomize() * colors.length)];
+        const fill: Color = gsap.utils.random([...colors]);
         updatedShapes[shapeId].fill = fill;
         return { shapes: [...updatedShapes] };
       }),
