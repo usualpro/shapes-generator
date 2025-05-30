@@ -26,6 +26,7 @@ export type ShapeGeneratorState = {
   playAnimations: () => void;
   addShape: () => void;
   updateShape: (shape: { shapeId: number }) => void;
+  animateShape: (shape: { shapeId: number }) => void;
   exportShapes: () => void;
   importShapes: () => void;
   setStageContainer: (stageContainer: HTMLDivElement) => void;

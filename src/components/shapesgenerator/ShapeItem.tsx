@@ -1,6 +1,6 @@
 import { Rect } from "react-konva";
 import { useShapeGeneratorStore } from "../../stores/ShapeGeneratorStore";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import type { RandomShapeType } from "../../types/shapesgenerator";
 
 export const ShapeItem = ({
@@ -12,7 +12,9 @@ export const ShapeItem = ({
   fill,
   rotation,
 }: RandomShapeType) => {
-  const { updateShape } = useShapeGeneratorStore((state) => state);
+  const { updateShape, animateShape } = useShapeGeneratorStore(
+    (state) => state
+  );
 
   const handleOnClick = useCallback(
     () =>
@@ -26,6 +28,14 @@ export const ShapeItem = ({
     x: width / 2,
     y: height / 2,
   };
+
+  useEffect(
+    () =>
+      animateShape({
+        shapeId,
+      }),
+    []
+  );
 
   return (
     <Rect

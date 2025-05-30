@@ -24,6 +24,20 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>()(
     shapes: [],
     stage: undefined,
     stageContainer: undefined,
+    animateShape: ({ shapeId }) => {
+      const { stage } = get();
+      const shapes = stage?.getChildren();
+      if (!shapes) return;
+      const { children } = shapes[0];
+      const shape = children[shapeId];
+      gsap.from(shape, {
+        scaleX: 2,
+        scaleY: 2,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power3.out",
+      });
+    },
     playAnimations: () => {
       const {
         stage,
