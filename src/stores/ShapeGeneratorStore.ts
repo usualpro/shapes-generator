@@ -25,7 +25,6 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>()(
     playAnimations: () => {
       const { stage, animationsDuration: duration } = get();
       const shapes = stage?.getChildren();
-      const ease = () => easings[Math.floor(randomize() * easings.length)];
       const numRotations = Math.floor(randomize() * easings.length) + 1;
       if (shapes) {
         const { children } = shapes[0];
@@ -34,7 +33,7 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>()(
         gsap.to(children, {
           rotation: () => "+=" + numRotations * 360,
           duration,
-          ease: ease(),
+          ease: `random(${easings})`,
         });
       }
     },
