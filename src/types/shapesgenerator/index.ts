@@ -14,6 +14,7 @@ export type RandomShapeType = {
 };
 
 export type ShapeGeneratorState = {
+  isAnimated: boolean;
   animationsDuration: number;
   numberOfRevolutions: number;
   stageSize: {

@@ -4,6 +4,7 @@ import { ShapeGeneratorThemeToggle } from "./ShapeGeneratorThemeToggle";
 
 export const ShapeGeneratorPanel = () => {
   const {
+    isAnimated,
     shapes,
     animationsDuration,
     numberOfRevolutions,
@@ -31,7 +32,11 @@ export const ShapeGeneratorPanel = () => {
 
   return (
     <div className="p-4 bg-base-200 h-full flex flex-col gap-3 justify-center">
-      <button className="btn btn-primary w-full " onClick={addShape}>
+      <button
+        className="btn btn-primary w-full"
+        disabled={isAnimated}
+        onClick={addShape}
+      >
         Add rectangle
       </button>
       <div className="divider"></div>
@@ -41,6 +46,7 @@ export const ShapeGeneratorPanel = () => {
           <input
             type="number"
             value={animationsDuration}
+            name="animationsDuration"
             onChange={handleOnAnimationDurationChange}
             className="grow input-primary"
             placeholder="1"
@@ -54,13 +60,14 @@ export const ShapeGeneratorPanel = () => {
           <input
             type="number"
             value={numberOfRevolutions}
+            name="numberOfRevolutions"
             onChange={handleOnRevolutionsChange}
             className="grow input-primary"
             placeholder="1"
           />
         </label>
         <button
-          disabled={hasShapes}
+          disabled={hasShapes || isAnimated}
           className="btn btn-primary w-full"
           onClick={playAnimations}
         >
@@ -70,11 +77,15 @@ export const ShapeGeneratorPanel = () => {
 
       <div className="divider"></div>
       <div className="flex flex-col gap-2">
-        <button className="btn btn-primary w-full" onClick={importShapes}>
+        <button
+          className="btn btn-primary w-full"
+          onClick={importShapes}
+          disabled={isAnimated}
+        >
           Import project
         </button>
         <button
-          disabled={hasShapes}
+          disabled={hasShapes || isAnimated}
           className="btn btn-primary w-full"
           onClick={exportShapes}
         >
