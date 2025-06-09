@@ -34,7 +34,7 @@ export const ShapeGeneratorPanel = () => {
     <div className="p-4 bg-base-200 h-full flex flex-col gap-3 justify-center">
       <button
         className="btn btn-primary w-full"
-        disabled={isAnimated}
+        /*disabled={isAnimated}*/
         onClick={addShape}
       >
         Add rectangle
@@ -67,7 +67,7 @@ export const ShapeGeneratorPanel = () => {
           />
         </label>
         <button
-          disabled={hasShapes || isAnimated}
+          disabled={hasShapes}
           className="btn btn-primary w-full"
           onClick={playAnimations}
         >

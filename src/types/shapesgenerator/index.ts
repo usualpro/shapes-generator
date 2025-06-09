@@ -17,6 +17,7 @@ export type ShapeGeneratorState = {
   isAnimated: boolean;
   animationsDuration: number;
   numberOfRevolutions: number;
+  tl: gsap.core.Timeline | undefined;
   stageSize: {
     width: number;
     height: number;

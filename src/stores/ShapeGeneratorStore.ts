@@ -35,33 +35,52 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>(
       shapes: [],
       stage: undefined,
       stageContainer: undefined,
-
+      tl: undefined,
       animateShape: ({ shapeId }) => {
+        const { tl, numberOfRevolutions, animationsDuration, isAnimated } =
+          get();
         const children = getStageChildren();
-        if (!children?.[shapeId]) return;
-        gsap.from(children[shapeId], {
-          scaleX: 2,
-          scaleY: 2,
-          opacity: 0,
-          duration: 0.8,
-          ease: "power3.out",
-        });
+        const animatedShape = children?.[shapeId];
+        if (!animatedShape) return;
+        if (!isAnimated) {
+          const entranceAnimation = gsap.from(animatedShape, {
+            scaleX: 2,
+            scaleY: 2,
+            opacity: 0,
+            duration: 0.8,
+            ease: "power3.out",
+            immediateRender: false,
+          });
+          entranceAnimation.play();
+        } else if (tl) {
+          const tln = gsap.timeline();
+          tln.to(animatedShape, {
+            rotation: `+=${numberOfRevolutions * 360}`,
+            duration: animationsDuration,
+            ease: gsap.utils.random([...easings]),
+            immediateRender: false,
+          });
+          tln.progress(tl.progress());
+        }
       },
-
       playAnimations: () => {
         const { animationsDuration, numberOfRevolutions } = get();
         const children = getStageChildren();
         if (!children) return;
-
-        gsap.to(children, {
+        const tl = gsap.timeline();
+        tl.to(children, {
           rotation: `+=${numberOfRevolutions * 360}`,
           duration: animationsDuration,
           ease: gsap.utils.random([...easings]),
           onStart: () => set({ isAnimated: true }),
           onComplete: () => set({ isAnimated: false }),
+          immediateRender: false,
         });
+        set({
+          tl,
+        });
+        tl.play();
       },
-
       addShape: () => {
         set(
           ({
