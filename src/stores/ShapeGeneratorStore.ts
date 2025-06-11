@@ -27,6 +27,16 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>(
       set({ stageSize: { width, height } });
     };
 
+    const baseAnimation = () => {
+      const { numberOfRevolutions, animationsDuration } = get();
+      return {
+        rotation: `+=${numberOfRevolutions * 360}`,
+        duration: animationsDuration,
+        ease: gsap.utils.random([...easings]),
+        immediateRender: false,
+      };
+    };
+
     return {
       animationsDuration: 1,
       numberOfRevolutions: 1,
@@ -37,44 +47,36 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>(
       stageContainer: undefined,
       tl: undefined,
       animateShape: ({ shapeId }) => {
-        const { tl, numberOfRevolutions, animationsDuration, isAnimated } =
-          get();
+        const { tl, isAnimated } = get();
         const children = getStageChildren();
         const animatedShape = children?.[shapeId];
         if (!animatedShape) return;
+        const tln = gsap.timeline();
         if (!isAnimated) {
-          const entranceAnimation = gsap.from(animatedShape, {
+          gsap.from(animatedShape, {
             scaleX: 2,
             scaleY: 2,
             opacity: 0,
             duration: 0.8,
             ease: "power3.out",
-            immediateRender: false,
           });
-          entranceAnimation.play();
-        } else if (tl) {
-          const tln = gsap.timeline();
+        } else if (tl && isAnimated) {
+          const animatedShapeInPlace = tl.getChildren()[0];
           tln.to(animatedShape, {
-            rotation: `+=${numberOfRevolutions * 360}`,
-            duration: animationsDuration,
-            ease: gsap.utils.random([...easings]),
-            immediateRender: false,
+            ...baseAnimation(),
+            ease: animatedShapeInPlace?.vars.ease,
           });
           tln.progress(tl.progress());
         }
       },
       playAnimations: () => {
-        const { animationsDuration, numberOfRevolutions } = get();
         const children = getStageChildren();
         if (!children) return;
         const tl = gsap.timeline();
         tl.to(children, {
-          rotation: `+=${numberOfRevolutions * 360}`,
-          duration: animationsDuration,
-          ease: gsap.utils.random([...easings]),
+          ...baseAnimation(),
           onStart: () => set({ isAnimated: true }),
           onComplete: () => set({ isAnimated: false }),
-          immediateRender: false,
         });
         set({
           tl,

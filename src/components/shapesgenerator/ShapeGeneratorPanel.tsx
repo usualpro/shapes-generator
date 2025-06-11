@@ -67,7 +67,7 @@ export const ShapeGeneratorPanel = () => {
           />
         </label>
         <button
-          disabled={hasShapes}
+          disabled={hasShapes || isAnimated}
           className="btn btn-primary w-full"
           onClick={playAnimations}
         >
@@ -77,15 +77,11 @@ export const ShapeGeneratorPanel = () => {
 
       <div className="divider"></div>
       <div className="flex flex-col gap-2">
-        <button
-          className="btn btn-primary w-full"
-          onClick={importShapes}
-          disabled={isAnimated}
-        >
+        <button className="btn btn-primary w-full" onClick={importShapes}>
           Import project
         </button>
         <button
-          disabled={hasShapes || isAnimated}
+          disabled={hasShapes}
           className="btn btn-primary w-full"
           onClick={exportShapes}
         >
