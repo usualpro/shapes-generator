@@ -19,14 +19,12 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>(
       const { stage } = get();
       return stage?.getChildren()?.[0]?.children;
     };
-
     // Utility to update stage size
     const updateStageSize = (stageContainer?: HTMLElement) => {
       if (!stageContainer) return;
       const { width, height } = canvasSizeRelativeToParent(stageContainer);
       set({ stageSize: { width, height } });
     };
-
     const baseAnimation = () => {
       const { numberOfRevolutions, animationsDuration } = get();
       return {
@@ -36,7 +34,6 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>(
         immediateRender: false,
       };
     };
-
     return {
       animationsDuration: 1,
       numberOfRevolutions: 1,
@@ -97,7 +94,6 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>(
             const minX = boundSize / 2;
             const maxY = stageHeight - boundSize / 2;
             const minY = boundSize / 2;
-
             const newShape: RandomShapeType = {
               id: shapes.length,
               x: minX + randomize() * (maxX - minX),
@@ -107,12 +103,10 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>(
               fill: gsap.utils.random([...colors]),
               rotation: randomize() * 360,
             };
-
             return { shapes: [...shapes, newShape] };
           }
         );
       },
-
       updateShape: ({ shapeId }) => {
         set(({ shapes }) => {
           if (!shapes[shapeId]) return { shapes };
@@ -120,23 +114,18 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>(
             (color) => color !== shapes[shapeId].fill
           );
           if (!availableColors.length) return { shapes };
-
           const updatedShapes = [...shapes];
           updatedShapes[shapeId] = {
             ...updatedShapes[shapeId],
             fill: gsap.utils.random(availableColors),
           };
-
           return { shapes: updatedShapes };
         });
       },
-
       updateStageSize: () => updateStageSize(get().stageContainer),
-
       exportShapes: () => {
         const { shapes, animationsDuration, numberOfRevolutions } = get();
         if (!shapes.length) return;
-
         const exportContent = {
           animationsDuration,
           numberOfRevolutions,
@@ -156,7 +145,6 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>(
         URL.revokeObjectURL(link.href);
         link.remove();
       },
-
       importShapes: () => {
         const input = document.createElement("input");
         input.type = "file";
@@ -174,7 +162,6 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>(
               console.error("Validation failed:", validationResult.error);
               return;
             }
-
             set({
               animationsDuration: jsonData.animationsDuration,
               numberOfRevolutions: jsonData.numberOfRevolutions,
@@ -187,12 +174,10 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>(
         };
         input.click();
       },
-
       setStageContainer: (stageContainer) => {
         set({ stageContainer });
         updateStageSize(stageContainer);
       },
-
       setAnimationsDuration: (animationsDuration) => {
         if (!AnimationDurationSchema.safeParse(animationsDuration).success) {
           console.error("Invalid animation duration");
@@ -200,7 +185,6 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>(
         }
         set({ animationsDuration });
       },
-
       setNumberOfRevolutions: (numberOfRevolutions) => {
         if (!NumberOfRevolutionsSchema.safeParse(numberOfRevolutions).success) {
           console.error("Invalid number of revolutions");
@@ -208,7 +192,6 @@ export const useShapeGeneratorStore = create<ShapeGeneratorState>(
         }
         set({ numberOfRevolutions });
       },
-
       setStage: (stage) => set({ stage }),
     };
   }
